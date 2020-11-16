@@ -44,17 +44,19 @@ const addNote = function (title, body) {
 }
 
 const removeNote = function (title){
-	const notes = loadNotes()
-	const remarr = notes.filter(function(note){return note.title !== title})
-	if(remarr.length === notes.length)
+	var notes = loadNotes()
+	var len = notes.length
+	for(var i=0;i<len;i++)
 	{
-		console.log(chalk.redBright("No Matching title!"))
+		if(title === notes[i].title)
+		{
+			console.log(chalk.greenBright("Found! Deleted!"))
+			notes.splice(i,1)
+			saveNotes(notes)
+			return;
+		}
 	}
-	else
-	{
-		console.log(chalk.greenBright("Note deleted!"))
-		saveNotes(remarr)
-	}
+	console.log(chalk.redBright("Note not found!"))
 }
 
 const saveNotes = function (notes) {
