@@ -19,7 +19,7 @@ yargs.command({
 			type: 'string'
 		}
 	},
-	handler: function (argv){
+	handler(argv){
 		notes.addNote(argv.title, argv.body)
 	}
 })
@@ -30,7 +30,7 @@ const remfun = function(){
 yargs.command({
 	command: 'remove',
 	describe: 'remove note',
-	handler: function(argv){notes.removeNote(argv.title)},
+	handler(argv){notes.removeNote(argv.title)},
 	builder: {
 		title:{
 			describe: "Note title",
@@ -39,16 +39,24 @@ yargs.command({
 		}
 	}
 })
-const readfun = function(){
-	console.log(chalk.red.bold("Reading note"))
+const readfun = (argv)=>{
+	notes.readNote(argv.title)
 }
 yargs.command({
 	command: 'read',
 	describe: 'read note',
-	handler: readfun
+	handler: readfun,
+	builder:{
+		title:{
+			describe: 'Title of note',
+			demandOption: true,
+			type: 'string'
+		}
+	}
 })
-const listfun = function(){
-	console.log(chalk.bgRed("listing notes"))
+const listfun = ()=>{
+	console.log(chalk.cyanBright.bgWhiteBright("Listing Notes"))
+	notes.listNotes()
 }
 yargs.command({
 	command: 'list',
