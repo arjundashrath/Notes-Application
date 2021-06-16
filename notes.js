@@ -1,5 +1,6 @@
 const fs = require('fs')
 const chalk = require('chalk')
+const prompt = require('prompt')
 
 const getNotes = () => {
     return 'Your notes...'
@@ -41,25 +42,40 @@ const addNote = (title, body) => {
     }
 }
 
-const removeNote = (title)=>{
+const removeNote = (index)=>{
+	
 	var notes = loadNotes()
-	var len = notes.length
-	for(var i=0;i<len;i++)
+	if(index > notes.length)
 	{
-		if(title === notes[i].title)
-		{
-			console.log(chalk.greenBright("Found! Deleted!"))
-			notes.splice(i,1)
-			saveNotes(notes)
-			return;
-		}
+		console.log(chalk.red("Invalid Index!"))
+		return
 	}
-	console.log(chalk.redBright("Note not found!"))
+	var len = notes.length
+	var i = index - 1;
+		console.log(chalk.redBright("Are you sure you want to delete note "+(index)+"? (Y/N)"))
+		prompt.start();
+		prompt.get(['confirmation'],(err,result)=>{
+			if(result.confirmation === 'Y' || result.confirmation === 'y')
+			{
+				notes.splice(i,1)
+				saveNotes(notes)
+				
+			}
+			else
+			{
+				console.log(chalk.red("Cancelled!"))
+				return
+			}
+			console.log(chalk.greenBright("Note Deleted!"));
+			return;
+		})
+			
 }
 
 const listNotes = ()=>{
+	var listcnt = 1;
 	var notes = loadNotes()
-	notes.forEach((note)=>{console.log(note.title)})
+	notes.forEach((note)=>{console.log(listcnt+". "+note.title);listcnt++;})
 	
 }
 const readNote = (title)=>{
@@ -78,12 +94,12 @@ const readNote = (title)=>{
 
 const saveNotes =(notes) => {
     const dataJSON = JSON.stringify(notes)
-    fs.writeFileSync('notes.json', dataJSON)
+    fs.writeFileSync('../data/notes.json', dataJSON)
 }
 
 const loadNotes = () => {
     try {
-        const dataBuffer = fs.readFileSync('notes.json')
+        const dataBuffer = fs.readFileSync('../data/notes.json')
         const dataJSON = dataBuffer.toString()
         return JSON.parse(dataJSON)
     } catch (e) {
